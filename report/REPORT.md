@@ -183,7 +183,7 @@ skills-auto   learn    18/18         6/9           90,311      3/3
 ## 9. Hạn chế và tính hợp lệ
 
 1. **Số tác vụ nhỏ**: mỗi vai trò chỉ có 3 tác vụ, mỗi họ 1 tác vụ. Mọi con số trung bình dựa trên 3 điểm dữ liệu, nên một check lệch đã đổi điểm trung bình khoảng 0,03 đến 0,04. Kết luận "subagents kém baseline 0,04 trên tác vụ đánh giá" vì thế không có ý nghĩa thống kê.
-2. **Mỗi cấu hình chạy một lần, nhiệt độ bằng 1**: `gpt-6-luna` không cho đặt nhiệt độ 0, nên mỗi lần chạy là một mẫu ngẫu nhiên. Ước lượng nhiễu duy nhất là cặp lần chạy `skills-auto` trên tác vụ học (lệch 0 check), không đủ để đặt khoảng tin cậy cho bất kỳ chênh lệch nào.
+2. **Mỗi cấu hình chạy một lần, nhiệt độ bằng 1**: `gpt-6-luna` không cho đặt nhiệt độ 0, nên mỗi lần chạy là một mẫu ngẫu nhiên. Ước lượng nhiễu duy nhất là cặp lần chạy `skills-auto` trên tác vụ học (lệch 0 check), không đủ để đặt khoảng tin cậy cho bất kỳ chênh lệch nào. Thử thách mở rộng 6e (phụ lục) bổ sung hai lần lặp trên tác vụ đánh giá để giảm bớt hạn chế này.
 3. **Curator cũng chỉ là một mẫu**: bộ skill cuối đến từ một lần sinh, và chất lượng của nó quyết định kết quả chính. Lần chạy đầu của curator giữ nguyên văn `schema_version` và `generated_by` trong skill về log, lần chạy lại thì làm mất. Một lần sinh khác có thể sửa được ít hơn hoặc nhiều hơn 6 check quy ước, nên con số "6/12 trên tác vụ đánh giá" là kết quả của bộ skill này, không phải của phương pháp nói chung.
 4. **Tác vụ do giảng viên thiết kế sẵn quy ước**: tác vụ đánh giá dùng lại đúng các quy ước của tác vụ học và phản hồi `detail` phát biểu nguyên văn quy tắc. Đây là điều kiện thuận lợi cho skill tự sinh; với phản hồi mơ hồ hơn hoặc quy ước không lặp lại, lợi ích có thể mất, phù hợp với ghi nhận của SkillsBench.
 5. **Một mô hình duy nhất và mô hình mạnh**: `baseline` đạt 36/36 check kỹ thuật, nên thí nghiệm không đo được liệu subagent hay skill có giúp phần kỹ thuật hay không (hiệu ứng trần). Các lần chạy thử trước đó với một mô hình yếu hơn (đã loại, xem phụ lục) cho thấy lỗi kỹ thuật xuất hiện và dao động mạnh giữa các lần chạy, nên kết luận ở đây không nên suy rộng sang mô hình khác.
@@ -191,7 +191,7 @@ skills-auto   learn    18/18         6/9           90,311      3/3
 
 ## 10. Kết luận
 
-Với `gpt-6-luna`, tác tử mặc định đạt toàn bộ check kỹ thuật (36/36) và trượt toàn bộ check quy ước (0/21), vì quy ước của tổ chức không có trong đề. Skill do curator tự sinh từ phản hồi của tác vụ học là điều kiện duy nhất cải thiện điểm: 18/30 lên 24/30 check trên tác vụ đánh giá, với chi phí gấp khoảng 2 lần token. Lợi ích đó bị giới hạn ở những quy ước đã gặp và được curator chép nguyên văn: ba quy tắc bị tóm tắt mơ hồ và ba quy ước mới đều không được giúp. Đa tác tử tốn gấp 4,3 lần token mà không tăng điểm, vì giao việc không bù được thông tin còn thiếu. Bước cải tiến tiếp theo là buộc curator giữ nguyên văn mọi tên khóa, tiêu đề và giá trị xuất hiện trong `detail` (hoặc tự kiểm skill bằng cách đối chiếu lại với `detail`), rồi lặp mỗi điều kiện ít nhất 3 lần để đo nhiễu.
+Với `gpt-6-luna`, tác tử mặc định đạt toàn bộ check kỹ thuật (36/36) và trượt toàn bộ check quy ước (0/21), vì quy ước của tổ chức không có trong đề. Skill do curator tự sinh từ phản hồi của tác vụ học là điều kiện duy nhất cải thiện điểm: 18/30 lên 24/30 check trên tác vụ đánh giá, với chi phí gấp khoảng 2 lần token. Lợi ích đó bị giới hạn ở những quy ước đã gặp và được curator chép nguyên văn: ba quy tắc bị tóm tắt mơ hồ và ba quy ước mới đều không được giúp. Đa tác tử tốn gấp 4,3 lần token mà không tăng điểm, vì giao việc không bù được thông tin còn thiếu. Bước cải tiến tiếp theo là buộc curator giữ nguyên văn mọi tên khóa, tiêu đề và giá trị xuất hiện trong `detail` (hoặc tự kiểm skill bằng cách đối chiếu lại với `detail`). Ba lần lặp trên tác vụ đánh giá ở thử thách mở rộng 6e (phụ lục) cho cùng thứ hạng giữa ba điều kiện.
 
 ## Phụ lục
 
@@ -215,9 +215,68 @@ Với `gpt-6-luna`, tác tử mặc định đạt toàn bộ check kỹ thuật
   python scripts/check_breakdown.py
   ```
 
-- Thử thách mở rộng (nếu có): không thực hiện.
+- Thử thách mở rộng: hướng 6e, lặp để đo nhiễu. Xem mục "Thử thách mở rộng 6e" ở cuối phụ lục.
 - Ghi chú khác:
   - **Mở rộng runner**: `run_task` dùng `agent.stream(..., stream_mode="values")` thay cho `invoke` để vẫn giữ được vết khi lần chạy lỗi giữa chừng (mở rộng tùy chọn nêu trong `03_runner.md`).
   - **Kết thúc dòng trên Windows**: kho được checkout với `core.autocrlf=true`, nên các tệp trong `tasks/` có kết thúc dòng CRLF trên đĩa. Check `tests_not_modified` của họ `code` so băm SHA-256 với bản LF và sẽ trượt dù tác tử không đụng vào test. Mọi lần chạy trong báo cáo vì vậy gắn một bản `tasks/` nguyên gốc (xuất bằng `git archive`, kết thúc dòng LF) chỉ-đọc vào `/lab/tasks` của container; nội dung tệp giống hệt bản trong git. Vì cùng lý do, `verify_freeze.py` được chạy trong container có `git` với `core.autocrlf=true` (như máy chủ), và được kiểm lại trên một bản clone LF sạch; cả hai đều báo OK. Chạy script này trực tiếp trên Windows sẽ báo sai lệch băm vì dấu phân cách đường dẫn khác Linux.
   - **Các lần chạy đã loại, không có trong `results/`**: trước khi chốt `gpt-6-luna`, harness được chạy thử với `gemini-3.1-flash-lite` (khoảng 10 lần chạy tác vụ học, gồm cả các lần bị ảnh hưởng bởi lỗi CRLF nói trên và một lần lỗi 400 của endpoint tương thích OpenAI). Các lần này dùng mô hình khác nên không so sánh được và đã bị xóa; chúng không được dùng cho bất kỳ số liệu nào trong báo cáo, và không có lần nào chạy trên tác vụ đánh giá.
   - **Chạy đồng thời**: ở Phần 4.2, `subagents --tasks eval` chạy song song với hai lệnh còn lại để tiết kiệm thời gian. Số `seconds` của các lần chạy đó có thể bị ảnh hưởng nhẹ; token và điểm thì không.
+
+### Thử thách mở rộng 6e: lặp để đo nhiễu
+
+**Câu hỏi.** Bảng ở mục 7 dựa trên một lần chạy cho mỗi ô, ở nhiệt độ 1. Các chênh lệch giữa ba điều kiện trên tác vụ đánh giá có lớn hơn dao động giữa các lần chạy không?
+
+**Thiết kế.** Chạy lại cả ba điều kiện trên ba tác vụ đánh giá thêm hai lần, với cùng mã, cùng mô hình và cùng bộ skill đã đóng băng. Kết quả ghi vào thư mục riêng `results-rep2/` và `results-rep3/`; `results/` và `report/table.md` không bị đụng tới. Tổng cộng 18 lần chạy thêm, không lần nào có `error`. Sáu lần chạy `skills-auto` mới đều có `skills_modified = false` và `skills_sha256` trùng với các lần chạy chính thức (`bcecba57...`), tức dùng đúng bộ skill của tag `freeze`.
+
+```text
+python -m lab.runner --condition baseline    --tasks eval --results results-rep2
+python -m lab.runner --condition skills-auto --tasks eval --results results-rep2
+python -m lab.runner --condition subagents   --tasks eval --results results-rep2
+# lặp lại ba lệnh trên với --results results-rep3 (hai lần lặp chạy đồng thời)
+python -m lab.noise results results-rep2 results-rep3 > report/noise.md
+```
+
+`src/lab/noise.py` là mô-đun mới (không sửa tệp có sẵn nào): nó đọc các `run.json` của nhiều thư mục kết quả và in điểm từng lần lặp, trung bình, khoảng dao động và các check đổi kết quả giữa các lần.
+
+**Số liệu** (nội dung `report/noise.md`; lần 1 là kết quả chính ở mục 7):
+
+| Điều kiện | Tác vụ | Lần 1 | Lần 2 | Lần 3 | Trung bình | Thấp nhất - cao nhất | Check đổi kết quả giữa các lần |
+|---|---|---|---|---|---|---|---|
+| baseline | code-eval | 7/11 | 7/11 | 7/11 | 7,00 | 7 - 7 | không |
+| baseline | data-eval | 5/9 | 5/9 | 5/9 | 5,00 | 5 - 5 | không |
+| baseline | logs-eval | 6/10 | 6/10 | 6/10 | 6,00 | 6 - 6 | không |
+| subagents | code-eval | 7/11 | 7/11 | 8/11 | 7,33 | 7 - 8 | `rule_type_hints` |
+| subagents | data-eval | 4/9 | 5/9 | 5/9 | 4,67 | 4 - 5 | `march_orders_utc` |
+| subagents | logs-eval | 6/10 | 6/10 | 6/10 | 6,00 | 6 - 6 | không |
+| skills-auto | code-eval | 10/11 | 10/11 | 10/11 | 10,00 | 10 - 10 | không |
+| skills-auto | data-eval | 6/9 | 6/9 | 6/9 | 6,00 | 6 - 6 | không |
+| skills-auto | logs-eval | 8/10 | 8/10 | 8/10 | 8,00 | 8 - 8 | không |
+
+| Điều kiện | Tổng check đạt (trên 30) ở ba lần lặp | Trung bình | Kỹ thuật mỗi lần | Quy ước mỗi lần | Token trung bình mỗi lần chạy, từng lần lặp | Token trung bình cả 9 lần chạy |
+|---|---|---|---|---|---|---|
+| baseline | 18, 18, 18 | 18,00 | 18/18, 18/18, 18/18 | 0/12, 0/12, 0/12 | 35.836; 43.698; 42.566 | 40.700 |
+| subagents | 17, 18, 19 | 18,00 | 17/18, 18/18, 18/18 | 0/12, 0/12, 1/12 | 98.021; 130.535; 128.746 | 119.101 |
+| skills-auto | 24, 24, 24 | 24,00 | 18/18, 18/18, 18/18 | 6/12, 6/12, 6/12 | 66.991; 57.437; 56.525 | 60.318 |
+
+**So sánh với kết quả chính.**
+
+- **Điểm của `baseline` và `skills-auto` lặp lại hoàn toàn**: 18/30 và 24/30 ở cả ba lần, với đúng cùng tập check trượt ở từng tác vụ (0 trên 180 lượt check đổi kết quả). Chênh lệch +6 check của `skills-auto` vì vậy không phải do nhiễu trong phạm vi ba lần lặp này.
+- **`subagents` là điều kiện duy nhất dao động**: 17, 18, 19 check; trung bình 18,00, đúng bằng `baseline`. Con số 0,56 so với 0,60 ở mục 7 (kém `baseline` 1 check) là một mẫu ở đầu thấp của khoảng dao động; ở lần 3 chính điều kiện này lại hơn `baseline` 1 check. Kết luận đúng là "không khác `baseline` về điểm", không phải "kém hơn".
+- **Token dao động nhiều hơn điểm**: một lần chạy `baseline` tốn từ 16.545 đến 82.695 token tùy tác vụ và lần lặp; `subagents` từ 78.741 đến 194.818. Tính trên 9 lần chạy mỗi điều kiện, `subagents` tốn gấp 2,9 lần `baseline` và `skills-auto` gấp 1,5 lần. Các tỉ lệ một-lần ở mục 8 (2,7 và 1,9 trên tác vụ đánh giá) cùng hướng nhưng lệch đáng kể về độ lớn, nên không nên trích tỉ lệ token với hai chữ số có nghĩa.
+- **Đối chiếu giả thuyết**: H1 được củng cố về điểm (chênh trung bình 0 check); ngưỡng "token ít nhất gấp 3" vẫn chưa đạt trên tác vụ đánh giá (2,9). H2 và phần "quy ước mới trượt ở mọi điều kiện" của H3 giữ nguyên ở cả ba lần lặp.
+
+**Cơ chế, dựa trên vết.**
+
+- *Vì sao `baseline` và `skills-auto` ổn định*: check kỹ thuật là phần mô hình làm được chắc chắn (54/54 ở mỗi điều kiện qua ba lần). Check quy ước thì do thông tin quyết định chứ không do may rủi: không có skill thì tác tử không có nguồn nào để biết quy ước (0/36), có skill thì nó làm đúng những quy tắc được ghi nguyên văn và trượt đúng những quy tắc ghi mơ hồ (6/12 ở cả ba lần, cùng các check `rule_meta_block`, `rule_clean_csv`, `rule_schema_header` và ba quy ước mới). Ở cả 9 lần chạy `skills-auto`, skill phù hợp đều được đọc (`skills_read` từ 1 đến 2).
+- *Vì sao `subagents` dao động*: cách giao việc thay đổi giữa các lần. Ở `data-eval`, lần 1 và lần 2 gọi `explorer` rồi `reviewer` và tác tử chính tự tính; lần 3 gọi đủ `explorer`, `implementer`, `reviewer`. Ở `logs-eval` lần 3, tác tử chính bỏ qua cả ba subagent tự định nghĩa và gọi `general-purpose` một lần. Số lần giao việc ở `code-eval` là 3, 4, 3.
+- *`march_orders_utc` ở `data-eval`*: lần 1 tác tử chính ghi 48 (script của nó đếm cả đơn thiếu `total`) và trượt; lần 2 ghi 44 và đạt, giống `baseline`. Lỗi ở lần 1 nằm trong script của tác tử chính chứ không trong subagent, nên nó là dao động của mô hình, được lộ ra vì luồng làm việc khác đi, chứ không phải hệ quả tất yếu của đa tác tử.
+- *`rule_type_hints` ở `code-eval` lần 3*: đây là check quy ước duy nhất `subagents` từng đạt (1/36). Ở lần này tác tử chính tự đoán và viết vào lời giao việc cho `implementer`: "Preserve sensible Acme Python style, type hints, and no unnecessary changes." Lời giao việc ở hai lần còn lại không nhắc đến chú thích kiểu và check này trượt. Tác tử chính không có nguồn nào cho quy ước đó, nên đây là một lần đoán trúng chứ không phải năng lực ổn định.
+
+**Hạn chế.**
+
+- Ba lần lặp vẫn là ít: với 0 lượt đổi kết quả trên 180 lượt check của `baseline` và `skills-auto`, chỉ có thể nói dao động là hiếm, chưa ước lượng được tần suất thật.
+- Chỉ lặp trên tác vụ đánh giá và chỉ lặp phần chạy tác tử. Nguồn nhiễu lớn hơn là curator thì không được lặp: bộ skill vẫn là một mẫu duy nhất (hạn chế 3 ở mục 9), nên kết quả "24/30 ổn định" là của bộ skill này.
+- Hai lần lặp mới chạy đồng thời với nhau, nên số `seconds` không so sánh được với lần 1.
+- Lần 1 chính là kết quả chính, không phải một lần chạy độc lập mới; ba lần lặp không cùng thời điểm.
+
+**Bước tiếp theo.** Lặp cả bước curator (sinh nhiều bộ skill từ cùng phản hồi, đóng băng từng bộ, đo từng bộ) để tách dao động do curator khỏi dao động do tác tử; đó là nguồn nhiễu mà thí nghiệm này chưa đo.

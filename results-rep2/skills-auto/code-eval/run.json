@@ -1,0 +1,79 @@
+{
+  "task": "code-eval",
+  "condition": "skills-auto",
+  "role": "eval",
+  "error": null,
+  "timestamp": "2026-10-06T13:23:57.949284+00:00",
+  "skills_sha256": "bcecba57799f6f920caa8a4dff34f2a95127e4aa33caf6c932d61fb13626d51f",
+  "seconds": 95.2,
+  "tokens": {
+    "input": 88172,
+    "output": 5200,
+    "total": 93372
+  },
+  "tool_calls": 21,
+  "subagent_calls": 0,
+  "skills_read": 1,
+  "skills_modified": false,
+  "final_message": "Fixed duration parsing, billable-block rounding and validation, and `add_slot`’s shared-state bug. Added type annotations, regression tests, and changelog entries. All tests pass (`6 passed`).\n\nChanged: `workspace/bookings/billing.py`, `workspace/bookings/timeutil.py`, `workspace/bookings/schedule.py`, `workspace/bookings/calendar_export.py`, `workspace/tests/test_regressions.py`, and `workspace/CHANGELOG.md`.",
+  "score": 0.9090909090909091,
+  "passed": 10,
+  "total": 11,
+  "checks": [
+    {
+      "name": "visible_suite_passes",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "tests_not_modified",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "parse_duration_all_formats",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "other_caller_fixed",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "billable_blocks_round_up",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "add_slot_no_shared_state",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "negative_minutes_rejected",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rule_type_hints",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rule_regression_tests",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rule_changelog",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rule_version_bump",
+      "passed": false,
+      "detail": ""
+    }
+  ]
+}
