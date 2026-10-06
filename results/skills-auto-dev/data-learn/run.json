@@ -1,0 +1,64 @@
+{
+  "task": "data-learn",
+  "condition": "skills-auto",
+  "role": "learn",
+  "error": null,
+  "timestamp": "2026-10-06T12:53:00.435815+00:00",
+  "skills_sha256": "bcecba57799f6f920caa8a4dff34f2a95127e4aa33caf6c932d61fb13626d51f",
+  "seconds": 47.2,
+  "tokens": {
+    "input": 42840,
+    "output": 3068,
+    "total": 45908
+  },
+  "tool_calls": 10,
+  "subagent_calls": 0,
+  "skills_read": 1,
+  "skills_modified": false,
+  "final_message": "Created `workspace/answer.json` and `workspace/clean.csv`. I kept one row per `order_id`, normalized region names and dates to UTC, excluded orders with missing amounts, and wrote known amounts in integer cents. The output records 7 duplicate rows removed and 8 distinct orders with missing amounts.",
+  "score": 0.75,
+  "passed": 6,
+  "total": 8,
+  "checks": [
+    {
+      "name": "north_q1_revenue",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "north_q1_orders",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "top_region",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "missing_amount_orders",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "duplicate_rows_removed",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rule_money_in_cents",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rule_meta_block",
+      "passed": false,
+      "detail": "RULE: answer.json has an object `meta` = {\"source\": <input file name>, \"rows_in\": <number of data rows in the input file, duplicates included>, \"rows_used\": <number of distinct orders with a known amount>}."
+    },
+    {
+      "name": "rule_clean_csv",
+      "passed": false,
+      "detail": "RULE: write workspace/clean.csv with the header order_id,timestamp_utc,region,amount_cents; one row per distinct order with a known amount; timestamp_utc as YYYY-MM-DDTHH:MM:SSZ (UTC); region in canonical spelling (North, South, East, West); amount in integer cents."
+    }
+  ]
+}
